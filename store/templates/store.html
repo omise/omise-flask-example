@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+Welcome to my store!
+
+{% block content %}
+<table>
+  {% for image in images %}
+  <tr>
+    <td>
+      <a href="{{ url_for('store.static', filename=image) }}">
+        <img src="{{ url_for('store.static', filename=image) }}" class="thumbnail">
+      </a>
+    </td>
+    <td>
+      {{ Price(item=image) }}
+    </td>
+    <td>
+      <form action="{{ url_for('store.add') }}" method="POST">
+        <input name="item" value="{{ image }}" type="hidden">
+        <input type="submit" value="add to cart" />
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

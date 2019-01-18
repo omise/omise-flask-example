@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Store</title>
+    <style>
+      img.thumbnail {
+        width: 10em;
+      }
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <p>
+      <strong>Navigation:</strong>
+      <a href="/">Store</a>
+      <a href="/checkout">Checkout</a>
+    </p>
+    {% block content %}{% endblock %}
+  </body>
+</html>

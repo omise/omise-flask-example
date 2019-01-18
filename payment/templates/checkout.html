@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+{% if cart.total() > 0 %}
+<table>
+  <tr>
+    <th>item</th>
+    <th>units</th>
+    <th>unit price</th>
+    <th>subtotal</th>
+  </tr>
+
+  {% for item, units, unit_price, subtotal in cart.items() %}
+  <tr>
+    <td>{{ item }}</td>
+    <td>{{ units }}</td>
+    <td>{{ Price(amount=unit_price) }}</td>
+    <td>{{ Price(amount=subtotal) }}</td>
+  </tr>
+  {% endfor %}
+
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><strong>{{ Price(amount=cart.total()) }}</strong></td>
+  </tr>
+</table>
+
+<form class="checkout-form" name="checkoutForm" method="POST" action="/charge">
+  <script type="text/javascript" src="https://cdn.omise.co/omise.js"
+          data-key="{{ key }}"
+          data-amount="{{ cart.total() }}"
+          data-currency="{{ currency }}">
+  </script>
+</form>
+{% else %}
+Cart empty!
+{% endif %}
+{% endblock %}
