@@ -42,7 +42,7 @@ def processed(chrg, already_redirected=False):
     if chrg.status == "successful":
         cart.empty()
         flash(f"Order {order_id} successfully completed.")
-        return render_template("complete.html", order_id=order_id)
+        return render_template("complete.html")
 
     if charge_is_pending_econtext:
         cart.empty()
@@ -63,10 +63,10 @@ def processed(chrg, already_redirected=False):
         return redirect(url_for("checkout.check_out"))
 
     if chrg.status == "failed":
-        flash(f"Error ('{chrg.failure_message}') while processing {order_id}")
+        flash(f"Error ('{chrg.failure_message}') while processing.")
         return redirect(url_for("checkout.check_out"))
 
-    flash("Error while processing {order_id}")
+    flash("Error while processing.")
     return redirect(url_for("checkout.check_out"))
 
 
