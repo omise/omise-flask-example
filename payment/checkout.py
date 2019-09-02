@@ -38,6 +38,7 @@ def processed(charge, cart, order_id, already_redirected=False):
     if charge.status == "successful":
         cart.empty()
         flash(f"Payment method successfully charged.  Order ID: {order_id}")
+
         return render_template("complete.html", order_id=order_id)
     elif charge_is_pending_econtext:
         cart.empty()
@@ -46,6 +47,7 @@ def processed(charge, cart, order_id, already_redirected=False):
                 f"Please visit <a href='{charge.authorize_uri}'>this link</a> to complete the charge."
             )
         )
+
         return redirect(url_for("store.index"))
     elif charge_is_pending_barcode:
         cart.empty()
@@ -62,15 +64,18 @@ def processed(charge, cart, order_id, already_redirected=False):
         return redirect(charge.authorize_uri)
     elif charge.status == "expired":
         flash("Charge expired.")
+
         return redirect(url_for("checkout.check_out"))
     elif charge.status == "failed":
         flash(
             "An error occurred.  Please try again or use a different card or payment method.  "
             + f"Here is the message returned from the server: '{charge.failure_message}' "
         )
+
         return redirect(url_for("checkout.check_out"))
     else:
         flash("An unknown error occurred")
+
         return redirect(url_for("checkout.check_out"))
 
 
