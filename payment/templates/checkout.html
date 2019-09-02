@@ -30,7 +30,9 @@
   <script type="text/javascript" src="https://cdn.omise.co/omise.js"
           data-key="{{ key }}"
           data-amount="{{ cart.total() }}"
-          data-currency="{{ currency }}">
+          data-currency="{{ currency }}"
+          data-other-payment-methods="internet_banking, bill_payment_tesco_lotus, alipay, credit_card, pay_easy, net_banking, convenience_store"
+          data-default-payment-method="credit_card">
   </script>
 </form>
 {% else %}
