@@ -26,14 +26,14 @@ def processed(chrg, already_redirected=False):
     charge_is_pending_econtext = (
         chrg.status == "pending"
         and chrg.source is not None
-        and chrg.source.type == "econtext" is not None
+        and chrg.source.type == "econtext"
     )
     charge_is_pending_billpayment = (
         chrg.status == "pending"
         and chrg.source is not None
         and chrg.source._attributes.get("references") is not None
     )
-    charge_is_pending_redirect_flow_source = (
+    charge_is_pending_redirect = (
         chrg.status == "pending"
         and chrg.authorize_uri is not None
         and already_redirected is False
@@ -55,7 +55,7 @@ def processed(chrg, already_redirected=False):
         flash(f"Visit Tesco Lotus to complete order {order_id}.")
         return render_template("barcode.html", charge=chrg)
 
-    if charge_is_pending_redirect_flow_source:
+    if charge_is_pending_redirect:
         return redirect(chrg.authorize_uri)
 
     if chrg.status == "expired":
