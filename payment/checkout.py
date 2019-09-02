@@ -128,6 +128,8 @@ def charge():
                 "order_id": str(order_id),
             },
             return_uri=f"https://omise-flask-example.herokuapp.com/orders/{order_id}/complete",
+            ip=request.remote_addr,
+            description=str(cart.items()),
             **nonce,
         )
 

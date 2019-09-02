@@ -32,7 +32,8 @@
           data-amount="{{ cart.total() }}"
           data-currency="{{ currency }}"
           data-other-payment-methods="{% if currency == "THB" %}internet_banking, bill_payment_tesco_lotus, alipay{% endif %}{% if currency == "JPY" %}pay_easy, net_banking, convenience_store{% endif %}"
-          data-default-payment-method="credit_card">
+          data-default-payment-method="credit_card"
+          data-location="yes">
   </script>
 </form>
 {% else %}
