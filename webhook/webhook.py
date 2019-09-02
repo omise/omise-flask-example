@@ -9,6 +9,6 @@ webhook = Blueprint("webhook", __name__)
 @webhook.route("/webhook", methods=["POST"])
 def order():
     event = request.form.get("event")
-    current_app.logger.info(event)
+    current_app.logger.info(request)
 
     return redirect("/")
