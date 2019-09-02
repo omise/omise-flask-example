@@ -6,12 +6,18 @@ verify_ssl = true
 [dev-packages]
 autopep8 = "*"
 pytest = "*"
+"python-language-server[all]" = "*"
+jedi = "*"
+pyls-mypy = "*"
+pyls-isort = "*"
+pyls-black = "*"
 
 [packages]
 flask = "*"
 omise = "*"
 python-dotenv = "*"
 py-money = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
