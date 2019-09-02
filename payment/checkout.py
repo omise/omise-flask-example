@@ -1,96 +1,95 @@
+import uuid
 from flask import (
     Markup,
     Blueprint,
     render_template,
     request,
-    session,
     current_app,
     flash,
     redirect,
     url_for,
 )
-from itertools import accumulate
 import omise
 from store.cart import Cart, Price
-import uuid
-import time
 
 checkout = Blueprint("checkout", __name__, template_folder="templates")
 
 
-def processed(charge, cart, order_id, already_redirected=False):
+def processed(chrg, already_redirected=False):
+    """
+    Process charge.
+    """
+
+    cart = Cart()
+    order_id = chrg._attributes["metadata"]["order_id"]
+
     charge_is_pending_econtext = (
-        charge.status == "pending"
-        and charge.source is not None
-        and charge.source.type == "econtext" is not None
+        chrg.status == "pending"
+        and chrg.source is not None
+        and chrg.source.type == "econtext" is not None
     )
-    charge_is_pending_barcode = (
-        charge.status == "pending"
-        and charge.source is not None
-        and charge.source._attributes.get("references") is not None
+    charge_is_pending_billpayment = (
+        chrg.status == "pending"
+        and chrg.source is not None
+        and chrg.source._attributes.get("references") is not None
     )
     charge_is_pending_redirect_flow_source = (
-        charge.status == "pending"
-        and charge.authorize_uri is not None
+        chrg.status == "pending"
+        and chrg.authorize_uri is not None
         and already_redirected is False
     )
 
-    if charge.status == "successful":
+    if chrg.status == "successful":
         cart.empty()
-        flash(f"Payment method successfully charged.  Order ID: {order_id}")
-
+        flash(f"Order {order_id} successfully completed.")
         return render_template("complete.html", order_id=order_id)
-    elif charge_is_pending_econtext:
-        cart.empty()
-        flash(
-            Markup(
-                f"Please visit <a href='{charge.authorize_uri}'>this link</a> to complete the charge."
-            )
-        )
 
+    if charge_is_pending_econtext:
+        cart.empty()
+        msg = f"Visit <a href='{chrg.authorize_uri}'>link</a> to complete order {order_id}."
+        flash(Markup(msg))
         return redirect(url_for("store.index"))
-    elif charge_is_pending_barcode:
+
+    if charge_is_pending_billpayment:
         cart.empty()
-        flash(f"Use this barcode to pay at Tesco Lotus. Order ID: {order_id}")
-        return render_template(
-            "barcode.html",
-            charge=charge,
-            ref=charge.source._attributes.get("references"),
-        )
-    elif charge_is_pending_redirect_flow_source:
-        session["charge_id"] = charge.id
-        session["order_id"] = order_id
+        flash(f"Visit Tesco Lotus to complete order {order_id}.")
+        return render_template("barcode.html", charge=chrg)
 
-        return redirect(charge.authorize_uri)
-    elif charge.status == "expired":
-        flash("Charge expired.")
+    if charge_is_pending_redirect_flow_source:
+        return redirect(chrg.authorize_uri)
 
+    if chrg.status == "expired":
+        flash("Charge expired for order {order_id}.")
         return redirect(url_for("checkout.check_out"))
-    elif charge.status == "failed":
-        flash(
-            "An error occurred.  Please try again or use a different card or payment method.  "
-            + f"Here is the message returned from the server: '{charge.failure_message}' "
-        )
 
+    if chrg.status == "failed":
+        flash(f"Error ('{chrg.failure_message}') while processing {order_id}")
         return redirect(url_for("checkout.check_out"))
-    else:
-        flash("An unknown error occurred")
 
-        return redirect(url_for("checkout.check_out"))
+    flash("Error while processing {order_id}")
+    return redirect(url_for("checkout.check_out"))
 
 
 @checkout.route("/orders/<order_id>/complete")
 def order(order_id):
-    cart = Cart()
+    """
+    Charge completion return URL.
+    """
+
     omise.api_secret = current_app.config.get("OMISE_SECRET_KEY")
     omise.api_version = current_app.config.get("OMISE_API_VERSION")
-    charge = omise.Charge.retrieve(session["charge_id"])
 
-    return processed(charge, cart, order_id, already_redirected=True)
+    search = omise.Search.execute("charge", **{"query": order_id})
+    chrg = search[0]
+    return processed(chrg, already_redirected=True)
 
 
 @checkout.route("/checkout")
 def check_out():
+    """
+    Create checkout page
+    """
+
     cart = Cart()
     return render_template(
         "checkout.html",
@@ -103,6 +102,10 @@ def check_out():
 
 @checkout.route("/charge", methods=["POST"])
 def charge():
+    """
+    Try to create charge.
+    """
+
     cart = Cart()
     token = request.form.get("omiseToken")
     source = request.form.get("omiseSource")
@@ -116,7 +119,7 @@ def charge():
         elif source:
             nonce = {"source": source}
 
-        charge = omise.Charge.create(
+        chrg = omise.Charge.create(
             amount=cart.total(),
             currency=current_app.config.get("STORE_CURRENCY"),
             metadata={
@@ -128,15 +131,9 @@ def charge():
             **nonce,
         )
 
-        return processed(charge, cart, order_id)
+        return processed(chrg)
 
-    except omise.errors.BaseError as e:
+    except omise.errors.BaseError as error:
         flash(f"An error occurred.  Please contact support.  Order ID: {order_id}")
-        current_app.logger.error(
-            f"OmiseError: {repr(e)}.  See https://www.omise.co/api-errors"
-        )
-        return redirect(url_for("checkout.check_out"))
-    except Exception as e:
-        flash(f"An error occurred.  Please contact support.  Order ID: {order_id}")
-        current_app.logger.error(repr(e))
+        current_app.logger.error(f"OmiseError: {repr(error)}.")
         return redirect(url_for("checkout.check_out"))
