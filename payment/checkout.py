@@ -17,7 +17,8 @@ checkout = Blueprint("checkout", __name__, template_folder="templates")
 
 def processed(chrg, already_redirected=False):
     """
-    Process charge.
+    Process charge depending on payment method.  `already_redirected`
+    tries to ensure that the customer is redirected only once.
     """
 
     cart = Cart()
@@ -73,7 +74,9 @@ def processed(chrg, already_redirected=False):
 @checkout.route("/orders/<order_id>/complete")
 def order(order_id):
     """
-    Charge completion return URL.
+    Charge completion return URL.  Once the customer is redirected
+    back to this site from the authorization page, we search for the
+    charge based on the provided `order_id`.
     """
 
     omise.api_secret = current_app.config.get("OMISE_SECRET_KEY")
@@ -87,7 +90,7 @@ def order(order_id):
 @checkout.route("/checkout")
 def check_out():
     """
-    Create checkout page
+    Simple checkout page that loads Omise.js.
     """
 
     cart = Cart()
@@ -103,7 +106,8 @@ def check_out():
 @checkout.route("/charge", methods=["POST"])
 def charge():
     """
-    Try to create charge.
+    Create charge based on token or source created by Omise.js on the
+    checkout page.
     """
 
     cart = Cart()
@@ -132,7 +136,6 @@ def charge():
             description=str(cart.items()),
             **nonce,
         )
-
         return processed(chrg)
 
     except omise.errors.BaseError as error:
