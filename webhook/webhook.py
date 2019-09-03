@@ -1,5 +1,5 @@
 from flask import Blueprint, request, current_app, redirect
-
+import json
 
 webhook = Blueprint("webhook", __name__)
 
@@ -11,4 +11,4 @@ def order():
     if event["data"]["object"] == "charge":
         charge_status = event["data"]["status"]
         current_app.logger.info(f"Event: {charge_status}")
-    return redirect("/")
+    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
