@@ -3,3 +3,4 @@ omise
 python-dotenv
 py-money
 gunicorn
+flask-talisman

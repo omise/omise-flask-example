@@ -18,6 +18,7 @@ omise = "*"
 python-dotenv = "*"
 py-money = "*"
 gunicorn = "*"
+flask-talisman = "*"
 
 [requires]
 python_version = "3.7"
