@@ -8,3 +8,4 @@ class Config(object):
     SECRET_KEY = os.environ["FLASK_SECRET_KEY"]
     STORE_LOCALE = os.environ["STORE_LOCALE"] or "th_TH"
     STORE_CURRENCY = os.environ["STORE_CURRENCY"] or "THB"
+    PREFERRED_URL_SCHEME = os.environ["PREFERRED_URL_SCHEME"] or "https"
