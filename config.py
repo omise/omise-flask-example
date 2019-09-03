@@ -1,11 +1,15 @@
 import os
 
 
-class Config(object):
+class Config:
+    """
+    Flask configuration
+    """
+
     OMISE_SECRET_KEY = os.environ["OMISE_SECRET_KEY"]
     OMISE_PUBLIC_KEY = os.environ["OMISE_PUBLIC_KEY"]
-    OMISE_API_VERSION = os.environ["OMISE_API_VERSION"]
     SECRET_KEY = os.environ["FLASK_SECRET_KEY"]
-    STORE_LOCALE = os.environ["STORE_LOCALE"] or "th_TH"
-    STORE_CURRENCY = os.environ["STORE_CURRENCY"] or "THB"
-    PREFERRED_URL_SCHEME = os.environ["PREFERRED_URL_SCHEME"] or "https"
+    OMISE_API_VERSION = os.environ.get("OMISE_API_VERSION", "2019-05-29")
+    STORE_LOCALE = os.environ.get("STORE_LOCALE", "th_TH")
+    STORE_CURRENCY = os.environ.get("STORE_CURRENCY", "THB")
+    PREFERRED_URL_SCHEME = os.environ.get("PREFERRED_URL_SCHEME", "https")
