@@ -15,6 +15,16 @@ from store.cart import Cart, Price
 checkout = Blueprint("checkout", __name__, template_folder="templates")
 
 
+def get_client_ip():
+    if "X-Forwarded-For" in request.headers:
+        return (
+            next(iter(request.headers["X-Forwarded-For"].split(",")))
+            or request.remote_addr
+        )
+    else:
+        return request.remote_addr
+
+
 def processed(chrg, already_redirected=False):
     """
     Process charge depending on payment method.  `already_redirected`
@@ -137,7 +147,7 @@ def charge():
                 "order_id": str(order_id),
             },
             return_uri=f"https://omise-flask-example.herokuapp.com/orders/{order_id}/complete",
-            ip=request.remote_addr,
+            ip=get_client_ip(),
             description=str(cart.items()),
             **nonce,
         )
