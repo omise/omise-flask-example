@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, current_app, flash, redirect, url_for
+from flask import Blueprint, request, current_app, redirect
 
 
 webhook = Blueprint("webhook", __name__)
