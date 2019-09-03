@@ -82,9 +82,14 @@ def order(order_id):
     omise.api_secret = current_app.config.get("OMISE_SECRET_KEY")
     omise.api_version = current_app.config.get("OMISE_API_VERSION")
 
-    search = omise.Search.execute("charge", **{"query": order_id})
-    chrg = search[0]
-    return processed(chrg, already_redirected=True)
+    try:
+        search = omise.Search.execute("charge", **{"query": order_id})
+        chrg = search[0]
+        return processed(chrg, already_redirected=True)
+    except omise.errors.BaseError as error:
+        flash(f"An error occurred.  Please contact support.  Order ID: {order_id}")
+        current_app.logger.error(f"OmiseError: {repr(error)}.")
+        return redirect(url_for("checkout.check_out"))
 
 
 @checkout.route("/checkout")
