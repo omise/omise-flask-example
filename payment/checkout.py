@@ -32,7 +32,7 @@ def processed(chrg, already_redirected=False):
     charge_is_pending_billpayment = (
         chrg.status == "pending"
         and chrg.source is not None
-        and chrg.source._attributes.get("references") is not None
+        and chrg.source.type == "bill_payment_tesco_lotus"
     )
     charge_is_pending_redirect = (
         chrg.status == "pending"
