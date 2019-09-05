@@ -13,11 +13,7 @@ def create_app(config_class=Config):
     app.register_blueprint(store)
     app.register_blueprint(checkout)
     app.register_blueprint(webhook)
-    csp = {
-        "default-src": ["'self'", "*.omise.co"],
-        "script-src": "'unsafe-inline' 'self' https://*.omise.co",
-        "style-src": "'unsafe-inline' 'self' https://*.omise.co",
-    }
+    csp = {"default-src": ["'unsafe-inline' 'self' '*.omise.co'"]}
     Talisman(app, content_security_policy=csp)
 
     return app
