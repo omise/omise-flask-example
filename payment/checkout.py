@@ -57,7 +57,7 @@ def processed(chrg, already_redirected=False):
 
     if charge_is_pending_econtext:
         cart.empty()
-        msg = f"Visit <a href='{chrg.authorize_uri}'>link</a> to complete order {order_id}."
+        msg = f"Visit <a href='{chrg.authorize_uri}' target='_blank'>link</a> to complete order {order_id}."
         flash(Markup(msg))
         return redirect(url_for("store.index"))
 
