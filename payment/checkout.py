@@ -100,6 +100,9 @@ def order(order_id):
         search = omise.Search.execute("charge", **{"query": order_id})
         chrg = search[0]
         return processed(chrg, already_redirected=True)
+    except IndexError as error:
+        flash(f"Order {order_id} not found.")
+        return redirect(url_for("checkout.check_out"))
     except omise.errors.BaseError as error:
         flash(f"An error occurred.  Please contact support.  Order ID: {order_id}")
         current_app.logger.error(f"OmiseError: {repr(error)}.")
@@ -141,6 +144,8 @@ def charge():
             nonce = {"card": token}
         elif source:
             nonce = {"source": source}
+        else:
+            nonce = {}
 
         chrg = omise.Charge.create(
             amount=cart.total(),
