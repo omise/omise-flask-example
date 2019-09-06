@@ -15,10 +15,14 @@ from store.cart import Cart, Price
 checkout = Blueprint("checkout", __name__, template_folder="templates")
 
 
+def first_or_none(l):
+    return next(iter(l))
+
+
 def get_client_ip():
     if "X-Forwarded-For" in request.headers:
         return (
-            next(iter(request.headers["X-Forwarded-For"].split(",")))
+            first_or_none(request.headers["X-Forwarded-For"].split(","))
             or request.remote_addr
         )
     else:
