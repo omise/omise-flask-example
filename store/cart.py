@@ -7,7 +7,7 @@ from money.currency import Currency
 
 
 class Price:
-    prices = {"nuts.jpg": 3000, "bolts.jpg": 2000}
+    prices = {"nuts.jpg": 54321, "bolts.jpg": 12345}
 
     def __init__(self, **kwargs):
         if "item" in kwargs:
