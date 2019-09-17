@@ -60,6 +60,9 @@ def processed(chrg, already_redirected=False):
         flash(f"Order {order_id} successfully completed.")
         return render_template("complete.html")
 
+    # Check whether source is "econtext" before checking whether charge has `authorize_uri`.
+    # Do not automatically redirect to `authorize_uri` for "econtext".
+
     if charge_is_pending_econtext:
         cart.empty()
         msg = f"Visit <a href='{chrg.authorize_uri}' target='_blank'>link</a> to complete order {order_id}."
