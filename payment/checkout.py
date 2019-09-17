@@ -1,15 +1,16 @@
 import uuid
+import omise
 from flask import (
-    Markup,
     Blueprint,
-    render_template,
-    request,
+    Markup,
     current_app,
     flash,
     redirect,
+    render_template,
+    request,
     url_for,
+    session,
 )
-import omise
 from store.cart import Cart, Price
 
 checkout = Blueprint("checkout", __name__, template_folder="templates")
