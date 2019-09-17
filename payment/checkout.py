@@ -126,6 +126,7 @@ def check_out():
         cart=cart,
         Price=Price,
         currency=current_app.config.get("STORE_CURRENCY"),
+        customer=session.get("customer"),
     )
 
 
@@ -137,14 +138,31 @@ def charge():
     """
 
     cart = Cart()
+    email = request.form.get("email")
     token = request.form.get("omiseToken")
     source = request.form.get("omiseSource")
+    customer = request.form.get("omiseCustomer")
     omise.api_secret = current_app.config.get("OMISE_SECRET_KEY")
     omise.api_version = current_app.config.get("OMISE_API_VERSION")
     order_id = uuid.uuid4()
 
     try:
-        if token:
+        if email and token:
+            cust = omise.Customer.create(
+                description="Created on Omise Flask",
+                metadata={"app": "Omise Flask"},
+                card=token,
+                email=email,
+            )
+            session["customer"] = cust.id
+            nonce = {"customer": cust.id}
+        elif customer and token:
+            cust = omise.Customer.retrieve(customer)
+            cust.update(card=token)
+            nonce = {"customer": customer, "card": cust.cards[-1].id}
+        elif customer:
+            nonce = {"customer": customer}
+        elif token:
             nonce = {"card": token}
         elif source:
             nonce = {"source": source}

@@ -26,14 +26,29 @@
   </tr>
 </table>
 
+{% if customer %}
+<form id="saved-customer" method="POST" action="/charge">
+  <input type="hidden" name="omiseCustomer" value={{ customer }}>
+  <button id="customer-button">
+    Pay (Default Card)
+  </button>
+</form>
+{% endif %}
+
 <form id="checkout-form" method="POST" action="/charge">
+  {% if customer %}
+  <input type="hidden" name="omiseCustomer" value={{ customer }}>
+  {% else %}
+  <input name="email" placeholder="Email">
+  {% endif %}
   <script type="text/javascript" src="https://cdn.omise.co/omise.js"
           data-key="{{ key }}"
           data-amount="{{ cart.total() }}"
           data-currency="{{ currency }}"
           data-other-payment-methods="{% if currency == "THB" %}installment, internet_banking, bill_payment_tesco_lotus, alipay{% endif %}{% if currency == "JPY" %}pay_easy, net_banking, convenience_store{% endif %}"
           data-default-payment-method="credit_card"
-          data-location="yes">
+          data-location="yes"
+          data-button-label="Pay (New Payment Method)">
   </script>
 </form>
 {% else %}
