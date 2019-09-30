@@ -16,18 +16,26 @@ from store.cart import Cart, Price
 checkout = Blueprint("checkout", __name__, template_folder="templates")
 
 
-def first_or_none(l):
-    return next(iter(l))
+def first_or_none(lst):
+    """
+    Return the first element of a list or None
+    """
+
+    return next(iter(lst))
 
 
 def get_client_ip():
+    """
+    Get client's real IP.  This could be specific to Heroku.
+    """
+
     if "X-Forwarded-For" in request.headers:
         return (
             first_or_none(request.headers["X-Forwarded-For"].split(","))
             or request.remote_addr
         )
-    else:
-        return request.remote_addr
+
+    return request.remote_addr
 
 
 def processed(chrg, already_redirected=False):
@@ -177,7 +185,7 @@ def charge():
                 "cart": {"items": cart.items()},
                 "order_id": str(order_id),
             },
-            return_uri=f"https://omise-flask-example.herokuapp.com/orders/{order_id}/complete",
+            return_uri=url_for("checkout.order", order_id=order_id, _external=True),
             ip=get_client_ip(),
             description=str(cart.items()),
             **nonce,
