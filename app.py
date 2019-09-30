@@ -7,7 +7,6 @@ from flask_talisman import Talisman
 
 
 def create_app(config_class=Config):
-
     app = Flask(__name__)
     app.config.from_object(config_class)
     app.register_blueprint(store)
@@ -15,7 +14,6 @@ def create_app(config_class=Config):
     app.register_blueprint(webhook)
 
     # Adding Content Security Policy to load all content either locally or from omise.co.
-
     Talisman(
         app,
         content_security_policy={"default-src": "'unsafe-inline' 'self' *.omise.co"},
