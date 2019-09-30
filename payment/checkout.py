@@ -168,7 +168,7 @@ def charge():
             cust = omise.Customer.retrieve(customer)
             cust.update(card=token)
             nonce = {"customer": customer, "card": cust.cards[-1].id}
-        elif customer:
+        elif customer and not source:
             nonce = {"customer": customer}
         elif token:
             nonce = {"card": token}
