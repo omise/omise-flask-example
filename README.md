@@ -137,8 +137,8 @@ def create_app(config_class=Config):
 
 Notice that there's not actually very much payment-related going on here.
 The actual mechanics of charging a credit card are stored in the `checkout` blueprint we registered on the app above.
-[Blueprints](https://flask.palletsprojects.com/en/1.1.x/blueprints/) help manage modular Flask applications.
-From the documentation:
+Blueprints help manage modular Flask applications.
+From the [documentation](https://flask.palletsprojects.com/en/1.1.x/blueprints/):
 
 > Flask uses a concept of blueprints for making application components and supporting common patterns within an application or across applications.
 > Blueprints can greatly simplify how large applications work and provide a central means for Flask extensions to register operations on applications.
