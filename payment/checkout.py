@@ -119,6 +119,10 @@ def order(order_id):
         flash(f"An error occurred.  Please contact support.  Order ID: {order_id}")
         current_app.logger.error(f"OmiseError: {repr(error)}.")
         return redirect(url_for("checkout.check_out"))
+    except Exception as e:
+        flash("""An error occurred.  Please contact support.""")
+        current_app.logger.error(repr(e))
+        return redirect(url_for("checkout.check_out"))
 
 
 @checkout.route("/checkout")
