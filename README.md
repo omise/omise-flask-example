@@ -162,7 +162,7 @@ payment
 ```
 
 To create this blueprint, we make an instance of the `Blueprint` class and define a `template_folder` under the current directory.
-After that, we add a route to the instance the same way we would with a normal Flask `app` instance using the [route decorator](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.route): `@checkout.route("/checkout")`.
+After that, we add a route to the instance the same way we would with a normal Flask `app` instance using the [route decorator](https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.route) prepending the blueprint name: `@checkout.route("/checkout")`.
 
 ```python
 checkout = Blueprint("checkout", __name__, template_folder="templates")
