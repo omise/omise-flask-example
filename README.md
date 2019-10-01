@@ -322,6 +322,8 @@ I hope you found this walkthrough helpful.
 [omise-python](https://github.com/omise/omise-python) is just one of the many [open-source libraries for integrating Omise](https://github.com/omise/) into your app.
 We also offer [plugins for popular e-commerce platforms](https://www.omise.co/plugins).
 
+[Sign up](https://dashboard.omise.co/signup)!
+
 # Testing
 
 ```
