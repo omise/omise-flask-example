@@ -69,9 +69,9 @@ Copy and paste them into this file.
 For `FLASK_SECRET_KEY`, create a random string of characters.
 How to do this is left as an [exercise for the reader](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif).
 
-*The above currency and locale assume a test account registered in Thailand.*
-*If you are using a test account registered in Japan, you should also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.*
-*For Singapore, you should set `STORE_CURRENCY=SGD` and `STORE_LOCALE=en_SG`.*
+> The above currency and locale assume a test account registered in Thailand.
+> If you are using a test account registered in Japan, you should also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.
+> For Singapore, you should set `STORE_CURRENCY=SGD` and `STORE_LOCALE=en_SG`.
 
 At this point, you should be able to run the app by typing the
 following and hitting `ENTER`:
