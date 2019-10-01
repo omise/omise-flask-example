@@ -38,7 +38,7 @@ def get_client_ip():
     return request.remote_addr
 
 
-def processed(chrg, already_redirected=False):
+def process(chrg, already_redirected=False):
     """
     Process charge depending on payment method.  `already_redirected`
     tries to ensure that the customer is redirected only once.
@@ -111,7 +111,7 @@ def order(order_id):
     try:
         search = omise.Search.execute("charge", **{"query": order_id})
         chrg = search[0]
-        return processed(chrg, already_redirected=True)
+        return process(chrg, already_redirected=True)
     except IndexError as error:
         flash(f"Order {order_id} not found.")
         return redirect(url_for("checkout.check_out"))
@@ -190,7 +190,7 @@ def charge():
             description=str(cart.items()),
             **nonce,
         )
-        return processed(chrg)
+        return process(chrg)
 
     except omise.errors.BaseError as error:
         flash(f"An error occurred.  Please contact support.  Order ID: {order_id}")
