@@ -17,14 +17,14 @@ def client(request):
 def test_index(client):
     """index works"""
     with client.session_transaction() as session:
-        session['cart'] = ['nuts.jpg']
-    response = client.get('/')
+        session["cart"] = ["nuts.jpg"]
+    response = client.get("/")
     assert 200 == response.status_code
 
 
 def test_checkout(client):
     """index works"""
     with client.session_transaction() as session:
-        session['cart'] = ['nuts.jpg']
-    response = client.get('/checkout')
+        session["cart"] = ["nuts.jpg"]
+    response = client.get("/checkout")
     assert 200 == response.status_code

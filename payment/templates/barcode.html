@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+{% set ref = charge.source._attributes.get("references") %}
+
+<table style="font-size: 0.9rem;">
+  <tr>
+    <td colspan="6">
+      <img src="{{ ref.get('barcode') }}">
+    </td>
+  </tr>
+  <tr>
+    <td>|</td>
+    <td>{{ ref.get('omise_tax_id') }}</td>
+    <td>00</td>
+    <td>{{ ref.get('reference_number_1') }}</td>
+    <td>{{ ref.get('reference_number_2') }}</td>
+    <td>{{ charge.amount }}</td>
+  </tr>
+</table>
+
+<p>
+Expires: {{ ref.get('expires_at') }}
+</p>
+
+{% endblock %}
