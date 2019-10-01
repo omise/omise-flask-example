@@ -6,12 +6,12 @@ Read the [documentation](https://www.omise.co/docs) and start getting paid!
 
 # Omise &hearts; Flask
 
-Integrate the Omise payment gateway into your Python Flask app to enable a convenient payment option for your users.
+Integrate the Omise payment gateway into your Python Flask app to enable convenient payment options for your users.
 
 [Flask](https://flask.palletsprojects.com/en/1.1.x/) is a minimal web application framework written in Python that pairs well with our Python library [omise-python](https://github.com/omise/omise-python).
 While this tutorial walks through some aspects of integration with Omise, it is not meant to be a comprehensive Flask or omise-python tutorial.
 
-*If you run into any issues regarding this tool and the functionality it provides, consult the frequently asked questions in our [comprehensive support documents](https://www.omise.co/support).*
+*If you run into any issues regarding this tool and the functionality it provides, consult the frequently asked questions in our [support documents](https://www.omise.co/support).*
 *If you can't find an answer there, post a question in our [forum](https://forum.omise.co/c/development) or [email our support team](mailto:support@omise.co).*
 
 ## Requirements
@@ -67,7 +67,7 @@ After logging in, click "Keys" in the lower-left corner.
 Copy and paste them into this file.
 
 For `FLASK_SECRET_KEY`, create a random string of characters.
-How to best do this is left as an [exercise for the reader](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif).
+How to do this is left as an [exercise for the reader](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif).
 
 *The above currency and locale assume a test account registered in Thailand.*
 *If you are using a test account registered in Japan, youshould also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.*
@@ -81,21 +81,21 @@ pipenv run flask run
 ```
 
 The Flask app should be running at [http://localhost:5000](http://localhost:5000).
-Go look at it, add some items to the cart, and hit checkout (you can use [these test credit card numbers](https://www.omise.co/api-testing) to create a test charge.
+Go look at it, add some items to the cart, and hit checkout (you can use [these test credit card numbers](https://www.omise.co/api-testing) to create a test charge).
 
 ![pipenv run flask run](https://cdn.omise.co/assets/screenshots/omise-flask-example/pipenv-run-flask-run.gif)
 
 ## How Was This App Made?
 
-The source code should be fairly minimal and (hopefully) easy to understand.
-For the rest of this `README.md`, let's walk through one way to integrate the Omise payment gateway as defined by this basic Flask app.
+The source code should be fairly minimal and (hopefully) clear.
+For the rest of this `README.md`, let's walk through one way to integrate the Omise payment gateway as expressed in this basic Flask app.
 We will:
 
-- Create an App Factory
-- Define a Blueprint
-- Prepare to Charge a Credit Card
-- Handle Failure Conditions
-- Successfully Charge That Credit Card
+- Create an *app factory*
+- Define a *blueprint*
+- Prepare to charge a credit card
+- Successfully charge that credit card
+- Use the dashboard to see our charge
 
 This README only lists the highlights.
 Please consult the source code for the full implementation.
@@ -145,7 +145,7 @@ From the documentation:
 > A Blueprint object works similarly to a Flask application object, but it is not actually an application.
 > Rather it is a blueprint of how to construct or extend an application.
 
-In theory, you could extract this blueprint, add more routes, and include it in your own Omise-powered Flask app.
+In theory, you could extract these blueprints and include them in your own Omise-powered Flask app.
 
 ### Laying Out the Blueprint
 
@@ -198,21 +198,24 @@ The payment form generation is handled by [Omise.js](https://www.omise.co/omise-
 
 ![Payment Pop Up](https://cdn.omise.co/assets/screenshots/omise-flask-example/payment-pop-up.gif)
 
-Once the user clicks on the button "Pay with Omise", the form sends a `POST` request to our local `/charge` endpoint providing the parameter `omiseToken`.
+Once the user clicks on the button "Pay with Omise", the form sends a `POST` request to our local `/charge` endpoint providing one of the parameters `omiseToken` (for credit cards) or `omiseSource` (for everything else).
 
 ### Getting Ready to Charge
 
-**We use the token to issue the charge rather than the actual credit card details.**
+**This part is important: We use the token to issue the charge rather than the actual credit card details.**
 **Never have credit card details stored on or pass through your server.**
 
 Using Omise, we avoid the risk of having to [collect card information](https://www.omise.co/collecting-card-information) directly.
 We can retrieve token in Flask by calling `request.form.get("omiseToken")`.
-So, for our `/charge` endpoint, we do the following:
+So, for our `/charge` endpoint, we do to at least the following:
 
 1. Get the cart information (to determine the price)
-1. Get the `omiseToken` we need to actually issue the charge
+1. Get the `omiseToken` or `omiseSource` we need to actually issue the charge
 1. Configure the `omise` object which issues the charge
 1. Create an `order_id`
+
+> The below example additionally collects `email` and `customer` to enable customer payment flows.
+> See the full implementation for more detail.
 
 We configure the `omise` object by providing the `OMISE_SECRET_KEY` and `OMISE_API_VERSION` we provided at the initial configuration of the app.
 While the API version is not strictly necessary, it is good practice to set this explicitly to ensure consistency of behavior in the future (see our guidelines for [API versioning](https://www.omise.co/api-versioning)).
@@ -244,9 +247,14 @@ Another way the request could fail is if the charge API request returns a [charg
 To create a charge using `omise-python`, we call `omise.Charge.create` which accepts several parameters, of which `token`, `amount`, and `currency` are required.
 The `amount` and `currency` are retrieved from the session cart and the configured `STORE_CURRENCY`, respectively.
 
-Optionally, we are adding several parameters, `ip`, `description`, and `return_uri`, all of which are highly recommended.
+Optionally, we are adding several parameters, `ip`, `description`, and `return_uri`, all of which are technically optional, but highly recommended.
+`ip` and `description` hold the customer IP and a description of the cart contents to help in Omise's automated fraud analysis.
+Most payment methods require a redirection to an authorization service, `return_uri` holds the URI to which the customer must be redirected after authorization.
+
 We are also passing a [custom metadata parameter](https://www.omise.co/store-your-data-on-omise-with-the-metadata-api).
 This object can be any shape, and I am using it to log the app that made this charge ("Omise Flask"), the current cart contents, and the `order_id` I generated above.
+
+After creating a charge, the result is passed to a processing function (`process`) which will decide what to do next.
 
 ```python
 chrg = omise.Charge.create(
@@ -262,7 +270,7 @@ chrg = omise.Charge.create(
     description=str(cart.items()),
     **nonce,
 )
-return processed(chrg)
+return process(chrg)
 ```
 
 If the charge returns an error within our `try` clause, we flash a message and return to the checkout page.
@@ -282,6 +290,7 @@ except Exception as e:
 #### Successfully Charging
 
 Of course, we are really here to *handle payments like a boss*.
+In the `process` function, we check whether the charge meets a series of conditions which determine how to handle it.
 If no exception was raised and `charge.status` is `successful`, we have successfully charged the card!
 In the case of success, we:
 
@@ -310,7 +319,6 @@ I hope you found this walkthrough helpful.
 [omise-python](https://github.com/omise/omise-python) is just one of the many [open-source libraries for integrating Omise](https://github.com/omise/) into your app.
 We also offer [plugins for popular e-commerce platforms](https://www.omise.co/plugins).
 
-
 # Testing
 
 ```
@@ -320,9 +328,9 @@ pipenv run python -m pytest --disable-pytest-warnings
 
 # Contributing
 
-Use `autopep8` for formatting:
+Use `black` for formatting:
 
 ```
 pipenv install --dev
-pipenv run autopep8 --in-place --recursive .
+pipenv run black --exclude venv .
 ```
