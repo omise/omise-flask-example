@@ -312,7 +312,7 @@ if chrg.status == "successful":
 
 Check [your dashboard](https://dashboard.omise.co) to see the charge and all its associated details.
 
-![Dashboard Details](https://cdn.omise.co/assets/screenshots/omise-flask-example/dashboard-details.png)
+![Dashboard Details](https://cdn.omise.co/assets/screenshots/omise-flask-example/dashboard-details.png?refresh_cache)
 
 ## Get Paid
 
