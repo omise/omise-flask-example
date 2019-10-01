@@ -290,8 +290,11 @@ except Exception as e:
 #### Successfully Charging
 
 Of course, we are really here to *handle payments like a boss*.
+
 In the `process` function, we check whether the charge meets a series of conditions which determine how to handle it.
-If no exception was raised and `charge.status` is `successful`, we have successfully charged the card!
+For instance, if it requires a redirection to an authorization service, we redirect the user.
+
+If no exception was raised, `failure_code` is null, and `charge.status` is `successful`, we have successfully charged the card!
 In the case of success, we:
 
 1. Empty the cart
