@@ -11,15 +11,15 @@ Integrate the Omise payment gateway into your Python Flask app to enable conveni
 [Flask](https://flask.palletsprojects.com/en/1.1.x/) is a minimal web application framework written in Python that pairs well with our Python library [omise-python](https://github.com/omise/omise-python).
 While this tutorial walks through some aspects of integration with Omise, it is not meant to be a comprehensive Flask or omise-python tutorial.
 
-*If you run into any issues regarding this tool and the functionality it provides, consult the frequently asked questions in our [support documents](https://www.omise.co/support).*
-*If you can't find an answer there, post a question in our [forum](https://forum.omise.co/c/development) or [email our support team](mailto:support@omise.co).*
+If you run into any issues regarding this tool and the functionality it provides, consult the frequently asked questions in our [support documents](https://www.omise.co/support).
+If you can't find an answer there, post a question in our [forum](https://forum.omise.co/c/development) or [email our support team](mailto:support@omise.co).
 
 ## Requirements
 
 To follow along, you will need:
 
 * An Omise account (and your `$OMISE_PUBLIC_KEY` and `$OMISE_SECRET_KEY`)
-* A Python 3.7 environment (we are using [Pipenv](https://pipenv.readthedocs.io/en/latest/) here)
+* A Python 3.7 environment
 
 ## Installation
 
@@ -70,7 +70,7 @@ For `FLASK_SECRET_KEY`, create a random string of characters.
 How to do this is left as an [exercise for the reader](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif).
 
 *The above currency and locale assume a test account registered in Thailand.*
-*If you are using a test account registered in Japan, youshould also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.*
+*If you are using a test account registered in Japan, you should also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.*
 *For Singapore, you should set `STORE_CURRENCY=SGD` and `STORE_LOCALE=en_SG`.*
 
 At this point, you should be able to run the app by typing the
@@ -218,9 +218,9 @@ So, for our `/charge` endpoint, we do to at least the following:
 > See the full implementation for more detail.
 
 We configure the `omise` object by providing the `OMISE_SECRET_KEY` and `OMISE_API_VERSION` we provided at the initial configuration of the app.
-While the API version is not strictly necessary, it is good practice to set this explicitly to ensure consistency of behavior in the future (see our guidelines for [API versioning](https://www.omise.co/api-versioning)).
+While the API version is not strictly necessary, it is good practice to set this explicitly so that we can migrate to a new version in a controlled way (see our guidelines for [API versioning](https://www.omise.co/api-versioning)).
 After this, we can then create a UUID `order_id`.
-This is also not necessary, but will be useful later as an identifier of the transaction.
+This is not required by Omise, but will be useful for you as a customer-facing identifier for the order.
 
 ```python
 @checkout.route("/charge", methods=["POST"])
@@ -248,10 +248,10 @@ To create a charge using `omise-python`, we call `omise.Charge.create` which acc
 The `amount` and `currency` are retrieved from the session cart and the configured `STORE_CURRENCY`, respectively.
 
 Optionally, we are adding several parameters, `ip`, `description`, and `return_uri`, all of which are technically optional, but highly recommended.
-`ip` and `description` hold the customer IP and a description of the cart contents to help in Omise's automated fraud analysis.
-Most payment methods require a redirection to an authorization service, `return_uri` holds the URI to which the customer must be redirected after authorization.
 
-We are also passing a [custom metadata parameter](https://www.omise.co/store-your-data-on-omise-with-the-metadata-api).
+* `ip` and `description` hold the customer IP and a description of the cart contents to help in Omise's automated fraud analysis.
+* Since most payment methods require a redirection to an authorization service, provide `return_uri` which is the URI to which the customer must be redirected after authorization.
+* We are also passing a [custom metadata parameter](https://www.omise.co/store-your-data-on-omise-with-the-metadata-api).
 This object can be any shape, and I am using it to log the app that made this charge ("Omise Flask"), the current cart contents, and the `order_id` I generated above.
 
 After creating a charge, the result is passed to a processing function (`process`) which will decide what to do next.
