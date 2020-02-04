@@ -16,7 +16,9 @@ def create_app(config_class=Config):
     # Adding Content Security Policy to load all content either locally or from omise.co.
     Talisman(
         app,
-        content_security_policy={"default-src": "'unsafe-inline' 'self' *.omise.co"},
+        content_security_policy={
+            "default-src": "'unsafe-inline' 'self' *.amazonaws.com *.omise.co"
+        },
     )
 
     return app
