@@ -17,3 +17,5 @@ class Config:
     STORE_CURRENCY = os.environ.get("STORE_CURRENCY", "THB")
     PREFERRED_URL_SCHEME = os.environ.get("PREFERRED_URL_SCHEME", "https")
     SERVER_NAME = os.environ.get("SERVER_NAME")
+    # AUTO_CAPTURE defaults to True unless set to 0, false, or False
+    AUTO_CAPTURE = os.environ.get("AUTO_CAPTURE") not in [0, "false", "False"]

@@ -62,6 +62,10 @@ def process(chrg, already_redirected=False):
         and chrg.authorize_uri is not None
         and not already_redirected
     )
+    charge_is_pending_capture = (
+        chrg.status == "pending"
+        and chrg.capturable
+        and (already_redirected or chrg.authorize_uri is None)
     )
 
     if chrg.status == "successful":
@@ -85,6 +89,13 @@ def process(chrg, already_redirected=False):
 
     if charge_is_pending_redirect:
         return redirect(chrg.authorize_uri)
+
+    if charge_is_pending_capture:
+        cart.empty()
+        flash(
+            f"Order {order_id} successfully completed.  Your card will be charged soon."
+        )
+        return render_template("complete.html")
 
     if chrg.status == "expired":
         flash("Charge expired for order {order_id}.")
@@ -193,6 +204,7 @@ def charge():
             return_uri=url_for("checkout.order", order_id=order_id, _external=True),
             ip=get_client_ip(),
             description=str(cart.items()),
+            capture=current_app.config.get("AUTO_CAPTURE"),
             **nonce,
         )
         return process(chrg)

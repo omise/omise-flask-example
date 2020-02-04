@@ -59,6 +59,7 @@ export STORE_LOCALE=th_TH
 export STORE_CURRENCY=THB
 export PREFERRED_URL_SCHEME=http
 export SERVER_NAME=localhost:5000
+export AUTO_CAPTURE=False
 ```
 
 Replace the values for `OMISE_SECRET_KEY` and `OMISE_PUBLIC_KEY` with your keys.
@@ -68,6 +69,8 @@ Copy and paste them into this file.
 
 For `FLASK_SECRET_KEY`, create a random string of characters.
 How to do this is left as an [exercise for the reader](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif).
+
+With `AUTO_CAPTURE`, we have set it to `False` to delay capture and only pre-authorize card charges.
 
 > The above currency and locale assume a test account registered in Thailand.
 > If you are using a test account registered in Japan, you should also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.
