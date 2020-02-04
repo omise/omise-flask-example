@@ -60,7 +60,8 @@ def process(chrg, already_redirected=False):
     charge_is_pending_redirect = (
         chrg.status == "pending"
         and chrg.authorize_uri is not None
-        and already_redirected is False
+        and not already_redirected
+    )
     )
 
     if chrg.status == "successful":
