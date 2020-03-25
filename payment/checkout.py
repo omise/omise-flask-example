@@ -151,6 +151,7 @@ def check_out():
         Price=Price,
         currency=current_app.config.get("STORE_CURRENCY"),
         customer=session.get("customer"),
+        location=current_app.config.get("LOCATION")
     )
 
 

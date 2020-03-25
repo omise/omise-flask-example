@@ -47,7 +47,7 @@
           data-currency="{{ currency }}"
           data-other-payment-methods="{% if currency == "THB" %}installment, internet_banking, bill_payment_tesco_lotus, alipay{% endif %}{% if currency == "JPY" %}pay_easy, net_banking, convenience_store{% endif %}"
           data-default-payment-method="credit_card"
-          data-location="yes"
+          data-location="{{ location }}"
           data-button-label="Pay (New Payment Method)">
   </script>
 </form>
