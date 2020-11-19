@@ -13,6 +13,7 @@ class Config:
     OMISE_PUBLIC_KEY = os.environ["OMISE_PUBLIC_KEY"]
     SECRET_KEY = os.environ["FLASK_SECRET_KEY"]
     OMISE_API_VERSION = os.environ.get("OMISE_API_VERSION", "2019-05-29")
+    OMISE_API_BASE = os.environ.get("OMISE_API_BASE", "https://api.omise.co")
     STORE_LOCALE = os.environ.get("STORE_LOCALE", "th_TH")
     STORE_CURRENCY = os.environ.get("STORE_CURRENCY", "THB")
     PREFERRED_URL_SCHEME = os.environ.get("PREFERRED_URL_SCHEME", "https")

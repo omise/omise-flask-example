@@ -119,6 +119,7 @@ def order(order_id):
 
     omise.api_secret = current_app.config.get("OMISE_SECRET_KEY")
     omise.api_version = current_app.config.get("OMISE_API_VERSION")
+    omise.api_main = current_app.config.get("OMISE_API_BASE")
 
     try:
         search = omise.Search.execute("charge", **{"query": order_id})
@@ -169,6 +170,7 @@ def charge():
     customer = request.form.get("omiseCustomer")
     omise.api_secret = current_app.config.get("OMISE_SECRET_KEY")
     omise.api_version = current_app.config.get("OMISE_API_VERSION")
+    omise.api_main = current_app.config.get("OMISE_API_BASE")
     order_id = uuid.uuid4()
 
     try:
