@@ -11,4 +11,4 @@ def order():
     if event["data"]["object"] == "charge":
         charge_status = event["data"]["status"]
         current_app.logger.info(f"Event: {charge_status}")
-    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+    return json.dumps({"success": True}), 500, {"ContentType": "text/html", "charset": "ISO-8859-1"}
