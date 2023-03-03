@@ -83,7 +83,7 @@ following and hitting `ENTER`:
 pipenv run flask run
 ```
 
-The Flask app should be running at [http://localhost:5000](http://localhost:5000).
+The Flask app should be running at [http://localhost.localdomain:5000](http://localhost.localdomain:5000).
 Go look at it, add some items to the cart, and hit checkout (you can use [these test credit card numbers](https://www.omise.co/api-testing) to create a test charge).
 
 ![pipenv run flask run](https://cdn.omise.co/assets/screenshots/omise-flask-example/pipenv-run-flask-run.gif)
