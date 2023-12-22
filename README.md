@@ -321,6 +321,7 @@ Check [your dashboard](https://dashboard.omise.co) to see the charge and all its
 
 Thanks for following along.
 We hope you found this walkthrough helpful.
+
 [Opn Payments](https://www.opn.ooo) is a payment service provider operating in Thailand, Japan, and Singapore.
 [omise-python](https://github.com/omise/omise-python) is just one of the many [open-source libraries for integrating Opn Payments](https://github.com/omise/) into your application.
 We also offer [plugins for popular e-commerce platforms](https://docs.opn.ooo/integrations).
