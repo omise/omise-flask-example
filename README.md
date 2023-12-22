@@ -73,7 +73,7 @@ How to do this is left as an [exercise for the reader](https://media.giphy.com/m
 
 With `AUTO_CAPTURE`, we have set it to `False` to delay capture and only pre-authorize card charges.
 
-> The above currency and locale assume a test account registered in Thailand.
+> The currency and locale mentioned in the `.env` file assume a test account registered in Thailand.
 > If you are using a test account registered in Japan, you should also set `STORE_CURRENCY=JPY` and `STORE_LOCALE=ja_JP`.
 > For Singapore, you should set `STORE_CURRENCY=SGD` and `STORE_LOCALE=en_SG`.
 
@@ -100,7 +100,7 @@ We will:
 - Successfully charge that card
 - Use the dashboard to see our charge
 
-This README only lists the highlights.
+This README lists the highlights.
 Please consult the source code for the full implementation.
 
 ### Build your factory
@@ -146,13 +146,13 @@ From the [documentation](https://flask.palletsprojects.com/en/1.1.x/blueprints/)
 > Flask uses a concept of blueprints for making application components and supporting common patterns within an application or across applications.
 > Blueprints can greatly simplify how large applications work and provide a central means for Flask extensions to register operations on applications.
 > A Blueprint object works similarly to a Flask application object, but it is not actually an application.
-> Rather it is a blueprint of how to construct or extend an application.
+> Rather, it is a blueprint of how to construct or extend an application.
 
 In theory, you could extract these blueprints and include them in your own Opn-powered Flask application.
 
-### Laying Out the blueprint
+### Laying out the blueprint
 
-On disk, the `checkout` blueprint and its template are stored in a folder called `payment` which resembles:
+On disk, the `checkout` blueprint and its template are stored in a folder called `payment` that resembles:
 
 ```
 $ tree payment
@@ -184,8 +184,8 @@ def check_out():
 ```
 
 Now when the user goes to the `/checkout` route, this blueprint will handle the rendering using the template `checkout.html` passing in values for `key`, `cart`, `Price`, `currency`, and `customer`.
-The template displays a very simple cart and the Opn-specific `<form>` code which powers our payment button.
-Here's a minimal version of what this could look like.
+The template displays a very simple cart and the Opn-specific `<form>` code that powers our payment button.
+Here's a minimal version of how this would look.
 
 ```html
 <form class="checkout-form" name="checkoutForm" method="POST" action="/charge">
@@ -197,11 +197,11 @@ Here's a minimal version of what this could look like.
 </form>
 ```
 
-The payment form generation is handled by [Omise.js](https://docs.opn.ooo/omise-js) which (at a minimum) accepts a `key` (your `OMISE_PUBLIC_KEY`), `amount`, and `currency`.
+The payment form generation is handled by [Omise.js](https://docs.opn.ooo/omise-js), which (at a minimum) accepts a `key` (your `OMISE_PUBLIC_KEY`), `amount`, and `currency`.
 
 ![Payment Pop Up](https://cdn.omise.co/assets/screenshots/omise-flask-example/payment-pop-up.gif)
 
-Once the user clicks on the button "Pay with Opn Payments", the form sends a `POST` request to our local `/charge` endpoint providing one of the parameters `omiseToken` (for  cards) or `omiseSource` (for everything else).
+Once the user clicks the button "Pay with Opn Payments", the form sends a `POST` request to our local `/charge` endpoint providing one of the parameters `omiseToken` (for  cards) or `omiseSource` (for everything else).
 
 ### Getting ready to charge
 
@@ -209,7 +209,7 @@ Once the user clicks on the button "Pay with Opn Payments", the form sends a `PO
 **Never have card details stored on or pass through your server.**
 
 Using Opn Payments, we avoid the risk of having to [collect card information](https://docs.opn.ooo/collecting-card-information) directly.
-We can retrieve token in Flask by calling `request.form.get("omiseToken")`.
+We can retrieve a token in Flask by calling `request.form.get("omiseToken")`.
 So, for our `/charge` endpoint, we do to at least the following:
 
 1. Get the cart information (to determine the price)
@@ -220,7 +220,7 @@ So, for our `/charge` endpoint, we do to at least the following:
 > The following example additionally collects `email` and `customer` to enable customer payment flows.
 > See the full implementation for more details.
 
-We configure the `omise` object by providing the `OMISE_SECRET_KEY` and `OMISE_API_VERSION` we provided during the initial configuration of the application.
+We configure the `omise` object by providing the `OMISE_SECRET_KEY` and `OMISE_API_VERSION` that we provided during the initial configuration of the application.
 While the API version is not strictly necessary, it is a good practice to set this explicitly so that we can migrate to a new version in a controlled way (see our guidelines for [API versioning](https://docs.opn.ooo/api-versioning)).
 After this, we can then create a UUID `order_id`.
 This is not required by Opn Payments, but will be useful for you as a customer-facing identifier for the order.
@@ -241,7 +241,7 @@ def charge():
 ### Attempting the charge
 
 We are almost ready to issue the charge request, but we should keep in mind that there are two ways for a charge API request to go wrong.
-In the first case, the request could return an [error object](https://docs.opn.ooo/api-errors) with a HTTP status code (e.g. `401 Authentication Failure`).
+First, the request could return an [error object](https://docs.opn.ooo/api-errors) with a HTTP status code (e.g. `401 Authentication Failure`).
 When using `omise-python`, this type of failure can be handled with a `try/except` block.
 Another way the request could fail is if the charge API request returns a [charge object](https://docs.opn.ooo/charges-api) with a `failure_code`.
 
@@ -277,7 +277,7 @@ return process(chrg)
 ```
 
 If the charge returns an error within our `try` clause, we flash a message and return to the checkout page.
-We are differentiating between `omise.errors.BaseError` and more generic Python exception to make it easier to troubleshoot in the future.
+We are differentiating between `omise.errors.BaseError` and the more generic Python exception to make it easier to troubleshoot in the future.
 
 ```python
 except omise.errors.BaseError as e:
